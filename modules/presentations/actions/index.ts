@@ -38,7 +38,7 @@ export async function createPresentation(raw: unknown) {
 
   //TODO: Inngest function
 
-  return presentation;
+  return { success: true, data: presentation };
 }
 
 export async function updatePresentation(raw: unknown) {

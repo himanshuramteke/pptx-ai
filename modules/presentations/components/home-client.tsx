@@ -19,6 +19,9 @@ import {
   TONE_OPTIONS,
 } from "../constants/presentation-options";
 import { PRESENTATION_TEMPLATES } from "../constants/presentation-templates";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { createPresentation } from "../actions";
 
 type FormState = {
   content: string;
@@ -29,6 +32,8 @@ type FormState = {
 };
 
 export default function HomeClient() {
+  const router = useRouter();
+
   const [isPending, startTransition] = useTransition();
   const [form, setForm] = useState<FormState>({
     content: "",
@@ -37,6 +42,31 @@ export default function HomeClient() {
     tone: "formal",
     layout: "balanced",
   });
+
+  const handleGenerate = () => {
+    if (!form.content.trim()) {
+      toast.error("Please enter your content first");
+      return;
+    }
+
+    startTransition(async () => {
+      const result = await createPresentation({
+        prompt: form.content.trim(),
+        slideCount: form.slideCount,
+        style: form.style,
+        tone: form.tone,
+        layout: form.layout,
+      });
+      if (!result.success) {
+        toast.error("Error creating presentation");
+        return;
+      }
+
+      toast.success("Presentation created");
+      router.refresh();
+      router.push(`/presentation/${result.data.id}`);
+    });
+  };
 
   return (
     <main className="min-h-screen pt-24 pb-12 px-4">
@@ -114,7 +144,7 @@ export default function HomeClient() {
           <div className="flex justify-end pt-2">
             <Button
               size="lg"
-              onClick={() => {}}
+              onClick={handleGenerate}
               disabled={isPending || !form.content.trim()}
               className="rounded-xl px-8 gap-2 font-semibold"
             >

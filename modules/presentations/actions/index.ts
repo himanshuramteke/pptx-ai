@@ -50,9 +50,6 @@ export async function createPresentation(
       data: { presentation: presentation.id },
     });
 
-<<<<<<< Updated upstream
-  return presentation;
-=======
     return { success: true as const, data: presentation };
   } catch (e) {
     return {
@@ -60,8 +57,8 @@ export async function createPresentation(
       error: e instanceof Error ? e.message : "Could not create presentation",
     };
   }
->>>>>>> Stashed changes
 }
+
 
 export async function updatePresentation(
   raw: unknown,
